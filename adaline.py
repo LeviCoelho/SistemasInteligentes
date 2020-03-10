@@ -14,17 +14,17 @@ class Adaline():
         self.Eqm = 0
         self.ErroPermitido = ErroPermitido
         self.labelGraphic = labelGraphic
-        self.vetorEQmAnt = []       
-        self.vetorE = []
-        self.vetorU = []
-        self.truePositive = 0
-        self.falseNegative = 0
-        self.falsePositive = 0
-        self.trueNegative = 0
-        self.Inputs = []
-        self.posicao = 0
+        self.vetorEQmAnt = [] #Vetor utilizado para plotar o gráfico      
+        self.vetorE = [] #Vetor utilizado para plotar o gráfico
+        self.vetorU = [] #Vetor utilizado para plotar o gráfico
+        self.truePositive = 0 #Variável da matriz de confusão
+        self.falseNegative = 0 #Variável da matriz de confusão
+        self.falsePositive = 0 #Variável da matriz de confusão
+        self.trueNegative = 0 #Variável da matriz de confusão
+
+
     def Graphic(self):   
-        plt.figure(num = 1,figsize=(15, 8))
+        plt.figure(num = 1,figsize=(15, 8)) #Define o tamanho da figura que o gráfico será plotado
         plt.subplot(1, 2, 1)
         plt.scatter(self.vetorE, self.vetorEQmAnt, label = self.labelGraphic, color = 'r', marker = '.', s = 10)
         plt.legend()
@@ -41,7 +41,7 @@ class Adaline():
         plt.xlabel('Valores da Matriz de confusao')
         plt.title('Matriz de confusao: ' + self.labelGraphic)
 
-    def showGraphic(self):        
+    def showGraphic(self): #Mostra o gráfico gerado na função Graphic       
         plt.tight_layout()
         plt.show()  
     
@@ -64,9 +64,9 @@ class Adaline():
                 self.trueNegative = self.trueNegative + 1
     
     def CaclEQm(self, training_inputs, labels):
-        self.p = len(labels)
-        Eqm = 0
-        for inputs, label in zip(training_inputs, labels):
+        self.p = len(labels) #Atribui a variavel p a quantidade padão de treinamentos
+        Eqm = 0 #inicializa a variavel Eqm com o valor 0
+        for inputs, label in zip(training_inputs, labels): #Calcular o Eqm para todas as amostras de treinamento
             inputs = np.append(-1, inputs)
             u = np.dot(inputs, self.weights)# np.dot ->MuktiplicaÃ§Ã£o de matrizes, multiplicaÃ§Ã£ vetorial            
             Eqm = Eqm +  (label - u)**2 #Eqm <- Eqm + (d[Atual] - u)²           
@@ -77,24 +77,24 @@ class Adaline():
          for e in range(self.epochs): #Quantidade de vezes que o algoritimo vai rodar
             print(f'>>> Start epoch {e + 1}')
             print(f'Actual weights {self.weights}')
-            EQmAnt = self.CaclEQm(training_inputs, labels)
+            EQmAnt = self.CaclEQm(training_inputs, labels) #Calcula o Eqm anterior 
             print('Actual EQm: %f' %EQmAnt)        
            
-            for inputs, label in zip(training_inputs, labels): # Tupla=
+            for inputs, label in zip(training_inputs, labels): # Tupla, relaciona a label com o input e roda o for para todos os valores do vetor
                 predicton = self.predict(inputs)
-                if predicton != label:
-                    inputsWeights = np.append(-1, inputs)
-                    self.weights = self.weights + self.learning_rate * (label - predicton) * inputsWeights #EquaÃ§Ã£o de ajuste de pesos
-                    print(f'New weights {self.weights}')
+                if predicton != label: #Se o prediction for diferente do valor real os pesos são calculados novamente
+                    inputsWeights = np.append(-1, inputs) #X
+                    self.weights = self.weights + self.learning_rate * (label - predicton) * inputsWeights #Equação de ajuste de pesos
+                    print(f'New weights {self.weights}') 
                     break
                 else:
                     print(f'Everything is OK!')
             
-            EQmAtual = self.CaclEQm(training_inputs, labels)  
+            EQmAtual = self.CaclEQm(training_inputs, labels) #Calcula novamente o novo Eqm após a atualização dos pesos 
             print('New EQm: %f' %EQmAtual)
             print('New Erro: %f' %abs(EQmAtual - EQmAnt))
-            self.vetorEQmAnt.append(EQmAtual)
-            self.vetorE.append(e)  
+            self.vetorEQmAnt.append(EQmAtual) #Atualiza o valor do Eqm para plotar o gráfico após o treinamento
+            self.vetorE.append(e)  #coloca a época atual em um vetor para plotar o gráfico após o treinamento
             
             if abs(EQmAtual - EQmAnt) <= self.ErroPermitido: 
                     print('Adaline Concluido na epoca %i' % e)
